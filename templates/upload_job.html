@@ -1,0 +1,8 @@
+<!-- templates/upload_job.html -->
+<h2>Upload Job Description (.txt)</h2>
+
+<form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+  <input type="file" name="jobdesc" accept=".txt" required>
+  <br><br>
+  <input type="submit" value="Upload Job Description">
+</form>

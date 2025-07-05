@@ -1,0 +1,38 @@
+# ml/skills.py
+known_skills = [
+    'Python', 'Java', 'C++', 'JavaScript', 'React', 'Node.js', 'Flask',
+    'Django', 'SQL', 'NoSQL', 'MongoDB', 'Git', 'GitHub', 'REST APIs',
+    'AWS', 'Azure', 'Docker', 'Kubernetes', 'Linux', 'Agile', 'UI/UX',
+    'HTML', 'CSS', 'TypeScript', 'Machine Learning', 'Data Science',
+    
+    # From provided skill text
+    'Active listening', 'Storytelling', 'Written communication', 'Editing',
+    'Teaching', 'Negotiating', 'Open-mindedness', 'Inquiring',
+    'Body language', 'Customer service', 'Presenting', 'Summarizing',
+    'Nonverbal communication', 'Documenting', 'Reporting', 'Interpersonal skills',
+    'Patience', 'Positivity', 'Conflict management', 'Coaching', 'Mediating',
+    'Motivating', 'Compassion', 'Caring', 'Networking', 'Inspiring', 'Flexibility',
+    'Collaboration', 'Sourcing feedback', 'Reliability', 'Empathy',
+    'Observing', 'Problem-solving', 'Inferring', 'Simplifying', 'Conceptual thinking',
+    'Evaluating', 'Streamlining', 'Creative thinking', 'Brainstorming',
+    'Cost-benefit analyzing', 'Deductive reasoning', 'Inductive reasoning',
+    'Assessing', 'Evidence collecting', 'Troubleshooting',
+    'Mentoring', 'Envisioning', 'Goal-setting', 'Employee development',
+    'Performance reviewing', 'Managing', 'Planning', 'Delegating', 'Directing',
+    'Supervising', 'Training', 'Earning trust', 'Influencing', 'Adapting',
+    'Crisis managing',
+    'Accounting', 'Word processing', 'Spreadsheet building', 'Coding',
+    'Programming', 'Operating equipment', 'Engineering', 'Experimenting',
+    'Testing', 'Constructing', 'Restoring', 'Product developing', 'Quality controlling',
+    'Blueprint drafting', 'Repairing',
+    'Translating', 'Speaking', 'Writing', 'Conversing', 'Reinterpreting',
+    'Public speaking', 'Following etiquette', 'Explaining', 'Respecting', 'Signaling',
+    'Proofreading', 'Introducing', 'Representing', 'Rephrasing', 'Code-switching',
+    'Graphic design', 'User experience development', 'User interface development',
+    'Typography', 'Layout development', 'Web design', 'Data visualization',
+    'Photo and video editing', 'Wireframing',
+    'Researching', 'Interpreting', 'Information processing', 'Organizing',
+    'Processing', 'Graphing', 'Computing', 'Calculating', 'Modeling',
+    'Extrapolating', 'Predicting', 'Forecasting', 'Investigating', 'Surveying',
+    'Statistical analysis'
+]

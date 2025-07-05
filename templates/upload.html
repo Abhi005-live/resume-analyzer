@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 style="text-align: center; color: white;">Upload Resume and Job Description</h2>
+
+<div style="
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: 12px;
+    background: rgba(13, 27, 42, 0.6); /* transparent dark blue */
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    color: white;
+">
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul style="color: #ffcc00; list-style: inside; padding-left: 0;">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data">
+
+        <div style="margin-bottom: 20px;">
+            <label style="font-weight: bold;">Upload Resume (PDF):</label><br>
+            <input type="file" name="resume" accept=".pdf" required 
+                   style="margin-top: 5px; padding: 10px; width: 100%; border-radius: 5px; border: none;">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="font-weight: bold;">Upload Job Description (PDF or TXT):</label><br>
+            <input type="file" name="job_description" accept=".pdf,.txt"
+                   style="margin-top: 5px; padding: 10px; width: 100%; border-radius: 5px; border: none;">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="font-weight: bold;">Or paste Job Description text:</label><br>
+            <textarea name="jd_text" rows="10" cols="60" placeholder="Paste job description here..."
+                      style="width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: none; resize: vertical;"></textarea>
+        </div>
+
+        <button type="submit" style="
+            width: 100%;
+            padding: 12px;
+            background-color: #1b263b;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;">
+            Submit
+        </button>
+    </form>
+</div>
+{% endblock %}

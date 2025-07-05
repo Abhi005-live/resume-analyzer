@@ -1,0 +1,53 @@
+python
+machine learning
+sql
+data analysis
+react
+REST APIs
+Git
+GitHub
+Docker
+Kubernetes
+AWS
+UI/UX
+Agile
+Scrum
+Machine Learning
+Deep Learning
+NLP
+Data Science
+TensorFlow
+python
+java
+c++
+html
+css
+javascript
+react
+node.js
+flask
+django
+sql
+mysql
+mongodb
+machine learning
+deep learning
+data analysis
+data visualization
+nlp
+computer vision
+pandas
+numpy
+matplotlib
+scikit-learn
+tensorflow
+keras
+git
+github
+docker
+aws
+azure
+linux
+communication
+problem solving
+teamwork

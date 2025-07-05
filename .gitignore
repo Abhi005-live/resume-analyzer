@@ -1,0 +1,57 @@
+.env
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+ENV/
+env/
+.venv/
+
+# Environment variable files
+.env
+.env.*
+
+# VS Code / IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Python-specific cache
+*.egg-info/
+*.egg
+dist/
+build/
+
+# Log files
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Compiled files
+*.so
+
+# PDF/text uploads
+uploads/
+
+# Flask specific
+instance/
+*.db
+*.sqlite3
+
+# GitHub secret scans prevent push of keys — this avoids committing secrets
+openai_api_key.txt
+openai_secret.txt
+
+# Node modules (if any frontend tools are used)
+node_modules/
+
+# Static cache
+*.tar.gz
+*.zip
+*.bak

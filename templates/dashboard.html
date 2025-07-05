@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resume Analysis Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container {
+            padding: 40px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .dark-mode {
+            background-color: #121212;
+            color: white;
+        }
+        .dark-mode section {
+            background-color: #1e1e1e;
+            color: white;
+        }
+        .dark-mode pre {
+            background-color: #2c2c2c;
+            color: white;
+        }
+        .match-bar {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .match-fill {
+            height: 20px;
+            background-color: #4caf50;
+            text-align: center;
+            color: white;
+            line-height: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+    <div class="container">
+        <h1>Resume Matching Dashboard</h1>
+
+        <section>
+            <h2>Match Percentage</h2>
+            <div class="match-bar">
+                <div class="match-fill" style="width: {{ match_percent }}%;">
+                    {{ match_percent }}%
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Extracted Skills from Resume</h2>
+            {% if skills %}
+                <ul>
+                    {% for skill in skills %}
+                        <li>{{ skill }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No skills found in resume.</p>
+            {% endif %}
+        </section>
+
+        <!-- <section>
+            <h2>Job Description Skills</h2>
+            {% if jd_skills %}
+                <ul>
+                    {% for skill in jd_skills %}
+                        <li>{{ skill }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No skills found in job description.</p>
+            {% endif %}
+        </section> -->
+
+        <section>
+            <h2>Matched Skills</h2>
+            {% if matched_skills %}
+                <ul>
+                    {% for skill in matched_skills %}
+                        <li>{{ skill }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No matched skills found.</p>
+            {% endif %}
+        </section>
+
+        <section>
+            <h2>Resume Text</h2>
+            <pre>{{ resume_text }}</pre>
+        </section>
+
+        <section>
+            <h2>Job Description Text</h2>
+            <pre>{{ jd_text }}</pre>
+        </section>
+
+        {% if gpt_feedback %}
+        <section>
+            <h2>GPT-Powered Suggestions</h2>
+            <p>{{ gpt_feedback }}</p>
+        </section>
+        {% endif %}
+    </div>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+        }
+    </script>
+</body>
+</html>
