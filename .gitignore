@@ -28,6 +28,7 @@ build/
 
 # Log files
 *.log
+app_output.txt
 
 # OS files
 .DS_Store

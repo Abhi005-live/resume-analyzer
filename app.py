@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import os
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -7,7 +7,7 @@ import sqlite3
 
 from ml.parser import extract_text_from_pdf, extract_entities
 from ml.matcher import calculate_match_percentage
-from ml.gpt_feedback import get_resume_feedback
+from ml.gpt_feedback import get_resume_feedback, rewrite_resume_for_job
 # Flask setup
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
@@ -169,6 +169,21 @@ def upload():
 
     return render_template('upload.html')
 
+
+
+@app.route('/rewrite-resume', methods=['POST'])
+@login_required
+def rewrite_resume():
+    data = request.get_json()
+    resume_text = data.get('resume_text', '')
+    jd_text = data.get('jd_text', '')
+    if not resume_text or not jd_text:
+        return jsonify({'error': 'Missing resume or job description text.'}), 400
+    try:
+        rewritten = rewrite_resume_for_job(resume_text, jd_text)
+        return jsonify({'rewritten_resume': rewritten})
+    except Exception as e:
+        return jsonify({'error': f'AI rewrite failed: {str(e)}'}), 500
 
 
 @app.route('/logout')

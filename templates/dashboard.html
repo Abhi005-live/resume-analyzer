@@ -1,156 +1,368 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Resume Analysis Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f7fa;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .container {
-            padding: 40px;
-        }
-        h1, h2 {
-            color: #333;
-        }
-        section {
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            transition: background-color 0.3s, color 0.3s;
-        }
-        pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            background-color: #f4f4f4;
-            padding: 15px;
-            border-radius: 5px;
-        }
-        ul {
-            list-style-type: disc;
-            padding-left: 20px;
-        }
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 10px 15px;
-            background: #333;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .dark-mode {
-            background-color: #121212;
-            color: white;
-        }
-        .dark-mode section {
-            background-color: #1e1e1e;
-            color: white;
-        }
-        .dark-mode pre {
-            background-color: #2c2c2c;
-            color: white;
-        }
-        .match-bar {
-            width: 100%;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-        .match-fill {
-            height: 20px;
-            background-color: #4caf50;
-            text-align: center;
-            color: white;
-            line-height: 20px;
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Resume Analysis Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body, html {
+      margin: 0; padding: 0;
+      background: #0a0a1a; color: #e0e0e0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      cursor: none; overflow-x: hidden;
+    }
+    .dash-header {
+      text-align: center; padding: 48px 24px 16px;
+      position: relative;
+    }
+    .dash-header h1 {
+      font-size: 2.4rem; font-weight: 800;
+      background: linear-gradient(135deg, #00f5ff, #00ff88);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .dash-header p { color: rgba(255,255,255,0.45); font-size: 14px; margin-top: 6px; }
+    .score-ring-wrap {
+      display: flex; justify-content: center; margin: 10px 0 20px;
+    }
+    .score-ring {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: conic-gradient(#00f5ff 0deg, #00ff88 var(--deg, 0deg), rgba(255,255,255,0.06) var(--deg, 0deg));
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 30px rgba(0,245,255,0.2);
+      position: relative;
+    }
+    .score-ring::before {
+      content: ''; position: absolute;
+      width: 90px; height: 90px;
+      background: #0a0a1a; border-radius: 50%;
+    }
+    .score-ring span {
+      position: relative; z-index: 1;
+      font-size: 22px; font-weight: 800;
+      color: #00f5ff;
+    }
+    .nav-bar {
+      display: flex; justify-content: flex-end;
+      padding: 16px 28px; gap: 12px;
+      position: fixed; top: 0; right: 0; z-index: 100;
+    }
+    .nav-btn {
+      padding: 9px 18px;
+      background: rgba(0,245,255,0.08);
+      border: 1px solid rgba(0,245,255,0.25);
+      color: #00f5ff; border-radius: 8px;
+      cursor: none; font-size: 13px; font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .nav-btn:hover {
+      background: rgba(0,245,255,0.2);
+      box-shadow: 0 0 15px rgba(0,245,255,0.3);
+      transform: translateY(-2px);
+    }
+    .skills-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+    .copy-btn {
+      margin-top: 12px; padding: 8px 18px;
+      background: rgba(0,255,136,0.1);
+      border: 1px solid rgba(0,255,136,0.3);
+      color: #00ff88; border-radius: 6px;
+      cursor: none; font-size: 13px;
+      transition: all 0.3s ease;
+    }
+    .copy-btn:hover {
+      background: rgba(0,255,136,0.25);
+      box-shadow: 0 0 12px rgba(0,255,136,0.3);
+    }
+    .feedback-line {
+      padding: 10px 14px; margin: 6px 0;
+      background: rgba(255,255,255,0.04);
+      border-left: 3px solid #00f5ff;
+      border-radius: 0 8px 8px 0;
+      font-size: 14px; line-height: 1.6;
+      animation: slideIn 0.4s ease backwards;
+    }
+    @keyframes slideIn {
+      from { opacity:0; transform: translateX(-20px); }
+      to   { opacity:1; transform: translateX(0); }
+    }
+    #particles-container { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .dash-container { position: relative; z-index: 1; }
+  </style>
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
-    <div class="container">
-        <h1>Resume Matching Dashboard</h1>
 
-        <section>
-            <h2>Match Percentage</h2>
-            <div class="match-bar">
-                <div class="match-fill" style="width: {{ match_percent }}%;">
-                    {{ match_percent }}%
-                </div>
-            </div>
-        </section>
+  <!-- Loader -->
+  <div id="page-loader">
+    <div class="loader-ring"></div>
+    <div class="loader-text">LOADING RESULTS</div>
+  </div>
 
-        <section>
-            <h2>Extracted Skills from Resume</h2>
-            {% if skills %}
-                <ul>
-                    {% for skill in skills %}
-                        <li>{{ skill }}</li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No skills found in resume.</p>
-            {% endif %}
-        </section>
+  <!-- Custom Cursor -->
+  <div id="cursor-dot"></div>
+  <div id="cursor-ring"></div>
 
-        <!-- <section>
-            <h2>Job Description Skills</h2>
-            {% if jd_skills %}
-                <ul>
-                    {% for skill in jd_skills %}
-                        <li>{{ skill }}</li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No skills found in job description.</p>
-            {% endif %}
-        </section> -->
+  <!-- Particles -->
+  <div id="particles-container"></div>
 
-        <section>
-            <h2>Matched Skills</h2>
-            {% if matched_skills %}
-                <ul>
-                    {% for skill in matched_skills %}
-                        <li>{{ skill }}</li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No matched skills found.</p>
-            {% endif %}
-        </section>
+  <!-- Nav -->
+  <div class="nav-bar">
+    <button class="nav-btn btn-glow" onclick="toggleTheme()">🌙 Theme</button>
+    <a href="/upload" class="nav-btn btn-glow">⬆ New Analysis</a>
+    <a href="/logout" class="nav-btn btn-glow">Logout</a>
+  </div>
 
-        <section>
-            <h2>Resume Text</h2>
-            <pre>{{ resume_text }}</pre>
-        </section>
-
-        <section>
-            <h2>Job Description Text</h2>
-            <pre>{{ jd_text }}</pre>
-        </section>
-
-        {% if gpt_feedback %}
-        <section>
-            <h2>GPT-Powered Suggestions</h2>
-            <p>{{ gpt_feedback }}</p>
-        </section>
-        {% endif %}
+  <div class="dash-container">
+    <!-- Header -->
+    <div class="dash-header reveal">
+      <h1>Resume Analysis Dashboard</h1>
+      <p>AI-powered insights to land your dream job</p>
     </div>
 
-    <script>
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
+    <div style="max-width:960px; margin:0 auto; padding:0 24px 60px;">
+
+      <!-- Match Score -->
+      <div class="dash-card card-3d reveal" style="text-align:center;">
+        <h2>🎯 Match Score</h2>
+        <div class="score-ring-wrap">
+          <div class="score-ring" id="score-ring">
+            <span id="score-text">0%</span>
+          </div>
+        </div>
+        <div class="match-bar-wrap">
+          <div class="match-fill-animated" id="match-fill">0%</div>
+        </div>
+        <p style="margin-top:12px; color:rgba(255,255,255,0.5); font-size:13px;">
+          Based on skill overlap between your resume and the job description
+        </p>
+      </div>
+
+      <!-- Resume Skills -->
+      <div class="dash-card card-3d reveal-left">
+        <h2>🧠 Your Resume Skills</h2>
+        <div class="skills-grid" id="resume-skills">
+          {% if skills %}
+            {% for skill in skills %}
+              <span class="skill-badge" style="animation-delay:{{ loop.index0 * 0.05 }}s">{{ skill }}</span>
+            {% endfor %}
+          {% else %}
+            <p style="color:rgba(255,255,255,0.4)">No skills detected.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Matched Skills -->
+      <div class="dash-card card-3d reveal-right">
+        <h2>✅ Matched Skills</h2>
+        <div class="skills-grid">
+          {% if matched_skills %}
+            {% for skill in matched_skills %}
+              <span class="skill-badge matched" style="animation-delay:{{ loop.index0 * 0.05 }}s">{{ skill }}</span>
+            {% endfor %}
+          {% else %}
+            <p style="color:rgba(255,255,255,0.4)">No matched skills found.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- GPT Feedback -->
+      {% if gpt_feedback %}
+      <div class="dash-card card-3d reveal">
+        <h2>💡 AI Suggestions</h2>
+        {% for line in gpt_feedback.split('\n') %}
+          {% if line.strip() %}
+            <div class="feedback-line" style="animation-delay:{{ loop.index0 * 0.1 }}s">{{ line }}</div>
+          {% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- AI Resume Rewrite -->
+      <div class="ai-rewrite-box card-3d reveal">
+        <h2>🤖 AI Resume Rewriter</h2>
+        <p style="color:rgba(255,255,255,0.55); font-size:14px; margin-bottom:16px;">
+          Let AI rewrite your resume to be perfectly tailored for this job description.
+        </p>
+        <button id="rewrite-btn" class="btn-glow" onclick="rewriteResume()">
+          ✨ Generate Optimized Resume
+        </button>
+        <div id="rewrite-spinner">⚙️ AI is rewriting your resume...</div>
+        <div id="rewritten-resume"></div>
+        <button class="copy-btn" id="copy-btn" style="display:none" onclick="copyResume()">
+          📋 Copy to Clipboard
+        </button>
+      </div>
+
+      <!-- Resume Text -->
+      <div class="dash-card card-3d reveal">
+        <h2>📄 Resume Text</h2>
+        <pre>{{ resume_text }}</pre>
+      </div>
+
+      <!-- JD Text -->
+      <div class="dash-card card-3d reveal">
+        <h2>📋 Job Description</h2>
+        <pre>{{ jd_text }}</pre>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const MATCH_PERCENT = {{ match_percent | round(1) }};
+    const RESUME_TEXT   = {{ resume_text | tojson }};
+    const JD_TEXT       = {{ jd_text | tojson }};
+
+    // ===== LOADER =====
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('page-loader').classList.add('hidden');
+        triggerReveal();
+        animateScore();
+      }, 700);
+    });
+
+    // ===== CUSTOM CURSOR =====
+    const dot = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; dot.style.left = mx+'px'; dot.style.top = my+'px'; });
+    (function animRing() { rx += (mx-rx)*0.12; ry += (my-ry)*0.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animRing); })();
+    document.querySelectorAll('a,button,[data-hover]').forEach(el => {
+      el.addEventListener('mouseenter', () => { ring.style.width='52px'; ring.style.height='52px'; ring.style.borderColor='rgba(0,245,255,0.9)'; });
+      el.addEventListener('mouseleave', () => { ring.style.width='36px'; ring.style.height='36px'; ring.style.borderColor='rgba(0,245,255,0.5)'; });
+    });
+
+    // ===== REVEAL =====
+    function triggerReveal() {
+      const io = new IntersectionObserver(entries => {
+        entries.forEach((e, i) => { if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 80); });
+      }, { threshold: 0.08 });
+      document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el => io.observe(el));
+    }
+
+    // ===== 3D TILT =====
+    document.querySelectorAll('.card-3d').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width  - 0.5;
+        const y = (e.clientY - r.top)  / r.height - 0.5;
+        card.style.transform = `perspective(900px) rotateY(${x*10}deg) rotateX(${-y*10}deg) scale(1.015)`;
+      });
+      card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+    });
+
+    // ===== SCORE ANIMATION =====
+    function animateScore() {
+      const fill = document.getElementById('match-fill');
+      const scoreText = document.getElementById('score-text');
+      const ring = document.getElementById('score-ring');
+      let current = 0;
+      const target = MATCH_PERCENT;
+      const step = () => {
+        current = Math.min(current + 1.2, target);
+        fill.style.width = current + '%';
+        fill.textContent = Math.round(current) + '%';
+        scoreText.textContent = Math.round(current) + '%';
+        ring.style.setProperty('--deg', (current / 100 * 360) + 'deg');
+        if (current < target) requestAnimationFrame(step);
+      };
+      setTimeout(step, 400);
+    }
+
+    // ===== PARALLAX =====
+    document.addEventListener('mousemove', e => {
+      const px = (e.clientX / window.innerWidth  - 0.5) * 15;
+      const py = (e.clientY / window.innerHeight - 0.5) * 15;
+      document.querySelectorAll('.dash-card').forEach((c, i) => {
+        const d = (i % 2 === 0 ? 1 : -1) * 0.3;
+        c.style.transform = c.style.transform.includes('perspective') ? c.style.transform
+          : `translateX(${px * d}px) translateY(${py * d}px)`;
+      });
+    });
+
+    // ===== PARTICLES =====
+    const pc = document.getElementById('particles-container');
+    ['#00f5ff','#00ff88','#7b61ff'].forEach(color => {
+      for (let i = 0; i < 6; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const s = Math.random() * 4 + 2;
+        p.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}vw;background:${color};animation-duration:${Math.random()*10+8}s;animation-delay:${Math.random()*6}s;`;
+        pc.appendChild(p);
+      }
+    });
+
+    // ===== THEME TOGGLE =====
+    function toggleTheme() {
+      document.body.classList.toggle('light-mode');
+    }
+
+    // ===== RIPPLE =====
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      const ripple = document.createElement('span');
+      const r = btn.getBoundingClientRect();
+      ripple.style.cssText = `position:absolute;border-radius:50%;width:10px;height:10px;background:rgba(255,255,255,0.35);left:${e.clientX-r.left-5}px;top:${e.clientY-r.top-5}px;transform:scale(0);pointer-events:none;animation:rippleAnim 0.5s ease forwards;`;
+      btn.style.position='relative'; btn.style.overflow='hidden';
+      btn.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 500);
+    });
+    const s = document.createElement('style');
+    s.textContent = `@keyframes rippleAnim{to{transform:scale(30);opacity:0;}}`;
+    document.head.appendChild(s);
+
+    // ===== AI RESUME REWRITE =====
+    function rewriteResume() {
+      const btn = document.getElementById('rewrite-btn');
+      const spinner = document.getElementById('rewrite-spinner');
+      const output = document.getElementById('rewritten-resume');
+      const copyBtn = document.getElementById('copy-btn');
+
+      btn.disabled = true;
+      btn.textContent = '⏳ Rewriting...';
+      spinner.style.display = 'block';
+      output.style.display = 'none';
+      copyBtn.style.display = 'none';
+
+      fetch('/rewrite-resume', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resume_text: RESUME_TEXT, jd_text: JD_TEXT })
+      })
+      .then(r => r.json())
+      .then(data => {
+        spinner.style.display = 'none';
+        btn.disabled = false;
+        btn.textContent = '✨ Generate Optimized Resume';
+        if (data.rewritten_resume) {
+          output.textContent = data.rewritten_resume;
+          output.style.display = 'block';
+          copyBtn.style.display = 'inline-block';
+        } else {
+          output.textContent = data.error || 'Could not generate rewrite.';
+          output.style.display = 'block';
         }
-    </script>
+      })
+      .catch(() => {
+        spinner.style.display = 'none';
+        btn.disabled = false;
+        btn.textContent = '✨ Generate Optimized Resume';
+        output.textContent = '⚠️ Network error. Please try again.';
+        output.style.display = 'block';
+      });
+    }
+
+    function copyResume() {
+      const text = document.getElementById('rewritten-resume').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('copy-btn');
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => btn.textContent = '📋 Copy to Clipboard', 2000);
+      });
+    }
+  </script>
 </body>
 </html>

@@ -1,10 +1,29 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 style="text-align:center;">Register</h2>
-<form method="POST">
-    <input type="text" name="email" placeholder="Email" required><br>
-    <input type="password" name="password" placeholder="Password" required><br>
-    <button type="submit">Register</button>
-</form>
-<p style="text-align:center;">Already have an account? <a href="/login">Login</a></p>
+<div class="reveal">
+  <h2>Create Account ✨</h2>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for msg in messages %}
+        <p style="color:#00ff88; background:rgba(0,255,136,0.08); padding:8px 12px; border-radius:6px; font-size:13px;">{{ msg }}</p>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  <form method="POST">
+    <div class="input-wrap">
+      <label>Email</label>
+      <input type="text" name="email" placeholder="you@example.com" required>
+    </div>
+    <div class="input-wrap">
+      <label>Password</label>
+      <input type="password" name="password" placeholder="Create a strong password" required>
+    </div>
+    <button type="submit" class="btn-glow" style="width:100%;padding:13px;background:linear-gradient(135deg,#00f5ff22,#00ff8822);border:1px solid #00f5ff55;color:#00f5ff;font-weight:700;font-size:15px;border-radius:10px;cursor:none;transition:all 0.3s ease;">
+      Register →
+    </button>
+  </form>
+  <p style="text-align:center; margin-top:20px; color:rgba(255,255,255,0.45); font-size:13px;">
+    Already have an account? <a href="/login">Login</a>
+  </p>
+</div>
 {% endblock %}

@@ -1,1 +1,283 @@
-body { font-family: Arial, sans-serif; background-color: #f5f5f5; }
+/* ===== CUSTOM CURSOR ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+#cursor-dot {
+  width: 8px; height: 8px;
+  background: #00f5ff;
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s;
+}
+#cursor-ring {
+  width: 36px; height: 36px;
+  border: 2px solid rgba(0,245,255,0.5);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: all 0.15s ease;
+}
+body:hover #cursor-ring { opacity: 1; }
+
+/* ===== SMOOTH LOADER ===== */
+#page-loader {
+  position: fixed; inset: 0;
+  background: #0a0a1a;
+  z-index: 99999;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+#page-loader.hidden { opacity: 0; visibility: hidden; }
+.loader-ring {
+  width: 60px; height: 60px;
+  border: 4px solid rgba(0,245,255,0.15);
+  border-top-color: #00f5ff;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+.loader-text {
+  color: #00f5ff; margin-top: 16px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px; letter-spacing: 3px;
+  animation: pulse 1.5s ease infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+/* ===== ENTRANCE REVEAL ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-left {
+  opacity: 0; transform: translateX(-50px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+.reveal-right {
+  opacity: 0; transform: translateX(50px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+/* ===== 3D CARD MOTION ===== */
+.card-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  will-change: transform;
+}
+.card-3d:hover {
+  box-shadow: 0 25px 50px rgba(0,245,255,0.15), 0 0 30px rgba(0,245,255,0.08);
+}
+
+/* ===== HOVER EFFECTS ===== */
+.btn-glow {
+  position: relative; overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.btn-glow::before {
+  content: '';
+  position: absolute; top: 50%; left: 50%;
+  width: 0; height: 0;
+  background: rgba(255,255,255,0.15);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.5s ease, height 0.5s ease;
+}
+.btn-glow:hover::before { width: 300px; height: 300px; }
+.btn-glow:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,245,255,0.3); }
+.btn-glow:active { transform: translateY(0) scale(0.98); }
+
+/* ===== MICRO INTERACTIONS ===== */
+.input-wrap { position: relative; margin-bottom: 20px; }
+.input-wrap input,
+.input-wrap textarea {
+  width: 100%; padding: 12px 14px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px; color: white;
+  font-size: 14px; outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+}
+.input-wrap input:focus,
+.input-wrap textarea:focus {
+  border-color: #00f5ff;
+  box-shadow: 0 0 0 3px rgba(0,245,255,0.15);
+  background: rgba(0,245,255,0.05);
+}
+.input-wrap label {
+  display: block; margin-bottom: 6px;
+  font-size: 13px; color: rgba(255,255,255,0.7);
+  transition: color 0.3s;
+}
+.input-wrap:focus-within label { color: #00f5ff; }
+
+/* ===== SKILL BADGE ===== */
+.skill-badge {
+  display: inline-block;
+  padding: 5px 14px;
+  margin: 4px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  background: rgba(0,245,255,0.1);
+  border: 1px solid rgba(0,245,255,0.3);
+  color: #00f5ff;
+  cursor: default;
+  transition: all 0.25s ease;
+  animation: badgePop 0.4s ease backwards;
+}
+.skill-badge:hover {
+  background: rgba(0,245,255,0.25);
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0,245,255,0.3);
+}
+.skill-badge.matched {
+  background: rgba(0,255,136,0.1);
+  border-color: rgba(0,255,136,0.4);
+  color: #00ff88;
+}
+.skill-badge.matched:hover {
+  background: rgba(0,255,136,0.25);
+  box-shadow: 0 4px 15px rgba(0,255,136,0.3);
+}
+@keyframes badgePop {
+  from { opacity:0; transform: scale(0.6); }
+  to   { opacity:1; transform: scale(1); }
+}
+
+/* ===== PROGRESS BAR ===== */
+.match-bar-wrap {
+  background: rgba(255,255,255,0.08);
+  border-radius: 50px; overflow: hidden;
+  height: 28px; margin-top: 12px;
+  position: relative;
+}
+.match-fill-animated {
+  height: 100%;
+  border-radius: 50px;
+  background: linear-gradient(90deg, #00f5ff, #00ff88);
+  width: 0%;
+  transition: width 1.5s cubic-bezier(0.4,0,0.2,1);
+  display: flex; align-items: center; justify-content: center;
+  color: #0a0a1a; font-weight: 700; font-size: 13px;
+  box-shadow: 0 0 20px rgba(0,245,255,0.4);
+}
+
+/* ===== PARALLAX SECTION ===== */
+.parallax-hero {
+  position: relative; overflow: hidden;
+}
+.parallax-layer {
+  will-change: transform;
+  transition: transform 0.1s linear;
+}
+
+/* ===== FLOATING PARTICLES ===== */
+.particle {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  animation: floatUp linear infinite;
+  opacity: 0;
+}
+@keyframes floatUp {
+  0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+  10%  { opacity: 0.6; }
+  90%  { opacity: 0.3; }
+  100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
+
+/* ===== DASHBOARD LAYOUT ===== */
+.dash-container {
+  max-width: 960px; margin: 0 auto;
+  padding: 40px 24px;
+  font-family: 'Segoe UI', sans-serif;
+}
+.dash-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(12px);
+  color: #e0e0e0;
+}
+.dash-card h2 {
+  font-size: 18px; font-weight: 700;
+  color: #00f5ff; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.dash-card pre {
+  white-space: pre-wrap; word-wrap: break-word;
+  background: rgba(0,0,0,0.3);
+  padding: 16px; border-radius: 8px;
+  font-size: 13px; color: #ccc;
+  max-height: 200px; overflow-y: auto;
+}
+
+/* ===== AI REWRITE SECTION ===== */
+.ai-rewrite-box {
+  background: linear-gradient(135deg, rgba(0,245,255,0.05), rgba(0,255,136,0.05));
+  border: 1px solid rgba(0,245,255,0.2);
+  border-radius: 16px; padding: 28px;
+  margin-bottom: 24px;
+}
+.ai-rewrite-box h2 { color: #00ff88; }
+#rewritten-resume {
+  white-space: pre-wrap; word-wrap: break-word;
+  background: rgba(0,0,0,0.4);
+  padding: 16px; border-radius: 8px;
+  font-size: 13px; color: #b0ffcc;
+  max-height: 400px; overflow-y: auto;
+  display: none;
+}
+#rewrite-btn {
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #00f5ff, #00ff88);
+  border: none; border-radius: 8px;
+  color: #0a0a1a; font-weight: 700;
+  font-size: 15px; cursor: pointer;
+  transition: all 0.3s ease;
+}
+#rewrite-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,245,255,0.4);
+}
+#rewrite-spinner {
+  display: none; margin-top: 16px;
+  color: #00f5ff; font-size: 14px;
+  animation: pulse 1.2s ease infinite;
+}
+
+/* ===== THEME TOGGLE ===== */
+.theme-toggle {
+  position: fixed; top: 20px; right: 20px;
+  padding: 10px 18px;
+  background: rgba(0,245,255,0.1);
+  border: 1px solid rgba(0,245,255,0.3);
+  color: #00f5ff; border-radius: 8px;
+  cursor: pointer; z-index: 1000;
+  font-size: 13px; font-weight: 600;
+  transition: all 0.3s ease;
+}
+.theme-toggle:hover {
+  background: rgba(0,245,255,0.2);
+  box-shadow: 0 0 15px rgba(0,245,255,0.3);
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0a0a1a; }
+::-webkit-scrollbar-thumb { background: #00f5ff44; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #00f5ff88; }

@@ -1,61 +1,115 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2 style="text-align: center; color: white;">Upload Resume and Job Description</h2>
-
-<div style="
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 30px;
-    border-radius: 12px;
-    background: rgba(13, 27, 42, 0.6); /* transparent dark blue */
-    backdrop-filter: blur(8px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    color: white;
-">
-
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul style="color: #ffcc00; list-style: inside; padding-left: 0;">
-        {% for message in messages %}
-          <li>{{ message }}</li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
-
-    <form method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data">
-
-        <div style="margin-bottom: 20px;">
-            <label style="font-weight: bold;">Upload Resume (PDF):</label><br>
-            <input type="file" name="resume" accept=".pdf" required 
-                   style="margin-top: 5px; padding: 10px; width: 100%; border-radius: 5px; border: none;">
-        </div>
-
-        <div style="margin-bottom: 20px;">
-            <label style="font-weight: bold;">Upload Job Description (PDF or TXT):</label><br>
-            <input type="file" name="job_description" accept=".pdf,.txt"
-                   style="margin-top: 5px; padding: 10px; width: 100%; border-radius: 5px; border: none;">
-        </div>
-
-        <div style="margin-bottom: 20px;">
-            <label style="font-weight: bold;">Or paste Job Description text:</label><br>
-            <textarea name="jd_text" rows="10" cols="60" placeholder="Paste job description here..."
-                      style="width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: none; resize: vertical;"></textarea>
-        </div>
-
-        <button type="submit" style="
-            width: 100%;
-            padding: 12px;
-            background-color: #1b263b;
-            border: none;
-            color: white;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;">
-            Submit
-        </button>
-    </form>
+<div class="reveal" style="text-align:center; margin-bottom:24px;">
+  <h2 style="font-size:1.8rem; background:linear-gradient(135deg,#00f5ff,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent; font-weight:800;">
+    Upload & Analyze
+  </h2>
+  <p style="color:rgba(255,255,255,0.4); font-size:13px; margin-top:4px;">AI-powered resume matching against your job description</p>
 </div>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul style="color:#ff6b6b; list-style:inside; padding-left:0; margin-bottom:16px;">
+    {% for message in messages %}
+      <li style="padding:8px; background:rgba(255,107,107,0.1); border-radius:6px; margin-bottom:4px;">{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<form method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data" id="upload-form">
+
+  <div class="input-wrap reveal" style="animation-delay:0.1s">
+    <label>📄 Resume (PDF)</label>
+    <div class="file-drop-zone" id="resume-drop" onclick="document.getElementById('resume-input').click()">
+      <span id="resume-label">Click or drag & drop your resume here</span>
+      <input type="file" id="resume-input" name="resume" accept=".pdf" required style="display:none">
+    </div>
+  </div>
+
+  <div class="input-wrap reveal" style="animation-delay:0.2s">
+    <label>📋 Job Description (PDF or TXT)</label>
+    <div class="file-drop-zone" id="jd-drop" onclick="document.getElementById('jd-input').click()">
+      <span id="jd-label">Click or drag & drop JD file here</span>
+      <input type="file" id="jd-input" name="job_description" accept=".pdf,.txt" style="display:none">
+    </div>
+  </div>
+
+  <div class="input-wrap reveal" style="animation-delay:0.3s">
+    <label>✏️ Or paste Job Description text</label>
+    <textarea name="jd_text" rows="6" placeholder="Paste job description here..."
+      style="width:100%;padding:12px 14px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:white;font-size:14px;outline:none;resize:vertical;transition:border-color 0.3s,box-shadow 0.3s;cursor:none;"
+      onfocus="this.style.borderColor='#00f5ff';this.style.boxShadow='0 0 0 3px rgba(0,245,255,0.15)'"
+      onblur="this.style.borderColor='rgba(255,255,255,0.15)';this.style.boxShadow='none'"></textarea>
+  </div>
+
+  <button type="submit" class="btn-glow reveal" id="submit-btn"
+    style="width:100%;padding:14px;background:linear-gradient(135deg,#00f5ff22,#00ff8822);border:1px solid #00f5ff55;color:#00f5ff;font-weight:700;font-size:16px;border-radius:10px;cursor:none;transition:all 0.3s ease;animation-delay:0.4s;"
+    onclick="showLoading(this)">
+    🚀 Analyze Resume
+  </button>
+
+</form>
+
+<style>
+  .file-drop-zone {
+    border: 2px dashed rgba(0,245,255,0.3);
+    border-radius: 10px; padding: 20px;
+    text-align: center; cursor: none;
+    color: rgba(255,255,255,0.45); font-size: 14px;
+    transition: all 0.3s ease;
+    background: rgba(0,245,255,0.03);
+  }
+  .file-drop-zone:hover, .file-drop-zone.dragover {
+    border-color: #00f5ff;
+    background: rgba(0,245,255,0.08);
+    color: #00f5ff;
+    box-shadow: 0 0 20px rgba(0,245,255,0.15);
+    transform: scale(1.01);
+  }
+  .file-drop-zone.has-file {
+    border-color: #00ff88;
+    background: rgba(0,255,136,0.06);
+    color: #00ff88;
+  }
+</style>
+
+<script>
+  function setupFileDrop(dropId, inputId, labelId) {
+    const drop = document.getElementById(dropId);
+    const input = document.getElementById(inputId);
+    const label = document.getElementById(labelId);
+
+    input.addEventListener('change', () => {
+      if (input.files[0]) {
+        label.textContent = '✅ ' + input.files[0].name;
+        drop.classList.add('has-file');
+      }
+    });
+
+    drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('dragover'); });
+    drop.addEventListener('dragleave', () => drop.classList.remove('dragover'));
+    drop.addEventListener('drop', e => {
+      e.preventDefault(); drop.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        const dt = new DataTransfer(); dt.items.add(file);
+        input.files = dt.files;
+        label.textContent = '✅ ' + file.name;
+        drop.classList.add('has-file');
+      }
+    });
+  }
+
+  setupFileDrop('resume-drop', 'resume-input', 'resume-label');
+  setupFileDrop('jd-drop', 'jd-input', 'jd-label');
+
+  function showLoading(btn) {
+    setTimeout(() => {
+      btn.textContent = '⏳ Analyzing...';
+      btn.disabled = true;
+    }, 10);
+  }
+</script>
 {% endblock %}
